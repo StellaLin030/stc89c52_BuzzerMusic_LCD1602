@@ -1,0 +1,346 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              01/19/2023 14:08:57 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\AppGallery\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Li
+                    -stings\main.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include "Delay.h"
+   3          #include "Timer0.h"
+   4          #include "LCD1602.h"
+   5          
+   6          sbit Buzzer=P2^5;
+   7          
+   8          #define SPEED 500
+   9          
+  10          #define P 0
+  11          #define L1  1
+  12          #define L1_ 2
+  13          #define L2  3
+  14          #define L2_ 4
+  15          #define L3  5
+  16          #define L4  6
+  17          #define L4_ 7
+  18          #define L5  8
+  19          #define L5_ 9
+  20          #define L6  10
+  21          #define L6_ 11
+  22          #define L7  12
+  23          #define M1  13
+  24          #define M1_ 14
+  25          #define M2  15
+  26          #define M2_ 16
+  27          #define M3  17
+  28          #define M4  18
+  29          #define M4_ 19
+  30          #define M5  20
+  31          #define M5_ 21
+  32          #define M6  22
+  33          #define M6_ 23
+  34          #define M7  24
+  35          #define H1  25
+  36          #define H1_ 26
+  37          #define H2  27
+  38          #define H2_ 28
+  39          #define H3  29
+  40          #define H4  30
+  41          #define H4_ 31
+  42          #define H5  32
+  43          #define H5_ 33
+  44          #define H6  34
+  45          #define H6_ 35
+  46          #define H7  36
+  47          
+  48          unsigned int FreqTable[]={
+  49            0,
+  50            63628,63731,63835,63928,64021,64103,64185,64260,64331,64400,64463,64528,
+  51            64580,64633,64684,64732,64777,64820,64860,64898,64934,64968,65000,65030,
+  52            65058,65085,65110,65134,65157,65178,65198,65217,65235,65252,65268,65283,
+  53          };
+  54          
+C51 COMPILER V9.60.7.0   MAIN                                                              01/19/2023 14:08:57 PAGE 2   
+
+  55          //Yellow - Coldplay
+  56          unsigned char code Music0[]={
+  57            
+  58            M3, 4,  M3, 4+2,  M3, 2,  M3, 4,
+  59            M3, 4,  M3, 4+2,  M3, 2,  M3, 4,
+  60            M3, 2,  M3, 2,  M3, 2,  M3, 2,  M3, 2,  M3, 2,  M3, 2,  M3, 2,  
+  61            M3, 2,  M3, 2,  M3, 2,  M3, 2,  M3, 2,  M3, 2,  M3, 2,  P,  2,
+  62            0xFF
+  63          };
+  64          //Recomposed by Stella
+  65          unsigned char code Music1[]={
+  66            
+  67            M5, 2,  M5, 2,  M5, 2,  M5, 2,  M5, 2,  M5, 2,  M5, 2,  M5, 2,  
+  68            M5, 2,  M4, 2,  M4, 2,  M4, 2,  M4, 2,  M4, 2,  M4, 2,  M4, 2,  
+  69            M7, 2,  M7, 2,  M7, 2,  M7, 2,  M7, 2,  M7, 2,  M7, 2,  M7, 2,  
+  70            M7, 2,  M6, 2,  M6, 2,  M6, 2,  M6, 2,  M6, 2,  M6, 2,  P,  2,
+  71            0xFF
+  72          };
+  73          //This is a song for my love.
+  74          unsigned char code Music2[]={
+  75            M2, 2,  M2, 2,  M2, 2,  M2, 2,  M2, 2,  M2, 2,  M2, 2,  M2, 2,    
+  76            M2, 2,  M1, 2,  M1, 2,  M1, 2,  M1, 2,  M1, 2,  M1, 2,  M1, 2,    
+  77            M5, 2,  M5, 2,  M5, 2,  M5, 2,  M5, 2,  M5, 2,  M5, 2,  M5, 2,  
+  78            M5, 2,  M4, 2,  M4, 2,  M4, 2,  M4, 2,  M4, 2,  M4, 2,  M4, 2,
+  79            P,  2,
+  80            0xFF
+  81          };
+  82          //Look at the stars | I came along
+  83          unsigned char code Music3[]={
+  84            H2, 2,  H3, 2,  H2, 2,  H3, 4,  P,  4,  
+  85            0xFF
+  86          };
+  87          //Look how they shine for you | I wrote a song for you | So then I took my turn
+  88          unsigned char code Music4[]={
+  89            P,  2,  H2, 2,  H3, 2,  H2, 2,  H3, 4,  H5, 4+2, 
+  90            H2, 4+2,  P,  4+4,
+  91            0xFF
+  92          };
+  93          //And everything you do | And all the things you do | Oh, what a thing to have done
+  94          unsigned char code Music5[]={
+  95            P,  2,  H1, 2,  H2, 2,  H1, 2,  H2, 4,  H5, 2,  H1, 2+4,
+  96            P,  4+4+4,
+  97            0xFF
+  98          };
+  99          //Yeah, they were all yellow | And it was called yellow | And it was all yellow
+ 100          unsigned char code Music6[]={
+ 101            P,  2+1,  M6, 1,  H1, 1,  M6, 1,  H1, 2+2,  H1, 1,  M6, 1,  M5, 4,
+ 102            P,  2,
+ 103            0xFF
+ 104          };
+ 105          //before "So then I took my turn"
+ 106          unsigned char code Music7[]={
+ 107            M3, 2,  M3, 2,  M3, 2,  M3, 2,  M3, 2,  M3, 2,  M3, 2,  P, 2,
+ 108            0xFF
+ 109          };
+ 110          //[interlude]
+ 111          unsigned char code Music8[]={
+ 112            M3, 2,  M3, 2,  M3, 2,  M3, 2,  M3, 2,  M3, 2,  M3, 2,    
+ 113            M4, 2,  M4, 2,  M4, 2,  M4, 2,  M3, 2,  M3, 2,  M3, 2,  M3, 2,  
+ 114            P,  4,  
+ 115            0xFF
+ 116          };
+C51 COMPILER V9.60.7.0   MAIN                                                              01/19/2023 14:08:57 PAGE 3   
+
+ 117          //Your skin
+ 118          unsigned char code Music9[]={
+ 119            H1, 4,  H6, 4+2,  H5, 2,  P,  2,  
+ 120            0xFF
+ 121          };
+ 122          //Oh yeah, your skin and bones
+ 123          unsigned char code Music10[]={
+ 124            H1, 2,  H1, 2,  H5, 2,  H5, 2,  H3, 2,  H3, 4,  P,  4,  
+ 125            0xFF
+ 126          };
+ 127          //Turn into
+ 128          unsigned char code Music11_1[]={
+ 129            H1, 2,  H6, 2,  H6, 4+2,  H5, 2,
+ 130            P,  2,
+ 131            0xFF
+ 132          };
+ 133          //something beautiful
+ 134          unsigned char code Music11_2[]={
+ 135            H1, 2,  H1, 2,  H5, 2,  H5, 2,  H3, 2,  H3, 4,  P,  4,  
+ 136            0xFF
+ 137          };
+ 138          //Do you know
+ 139          unsigned char code Music12[]={
+ 140            H1, 2,  H6, 2,  H6, 4+2,  H5, 2,  P,  2,  
+ 141            0xFF
+ 142          };
+ 143          //You know I love you so - 1
+ 144          unsigned char code Music13[]={
+ 145            H1, 2,  H1, 2,  H5, 2,  H5, 2,  H3, 2,  H3, 4,
+ 146            M6, 4+4,  P,  4+4,
+ 147            0xFF
+ 148          };
+ 149          //You know I love you so - 2
+ 150          unsigned char code Music14[]={
+ 151            P,  2,  H1, 2,  H1, 2,  H5, 2,  H5, 2,  H3, 2,  H3, 4,
+ 152            M5, 4+4,  P,  4+4,
+ 153            0xFF
+ 154          };
+ 155          
+ 156          char *code Lyrics0 = "Yellow-Coldplay";
+ 157          
+ 158          char *code Lyrics1_1 = "Recomposed";
+ 159          char *code Lyrics1_2 = "By Stella030";
+ 160          
+ 161          char *code Lyrics2_1 = "\"This is a song";
+ 162          char *code Lyrics2_2 = "for my love.\"";
+ 163          
+ 164          char *code Lyrics3_1 = "Look at the";
+ 165          char *code Lyrics3_2 = "stars";
+ 166          
+ 167          char *code Lyrics4_1 = "Look how they";
+ 168          char *code Lyrics4_2 = "shine for you";
+ 169          
+ 170          char *code Lyrics5_1 = "And everything";
+ 171          char *code Lyrics5_2 = "you do";
+ 172          
+ 173          char *code Lyrics6_1 = "Yeah, they were";
+ 174          char *code Lyrics6_2 = "all yellow";
+ 175          
+ 176          char *code Lyrics7 = "I came along";
+ 177          
+ 178          char *code Lyrics8_1 = "I wrote a song";
+C51 COMPILER V9.60.7.0   MAIN                                                              01/19/2023 14:08:57 PAGE 4   
+
+ 179          char *code Lyrics8_2 = "for you";
+ 180          
+ 181          char *code Lyrics9_1 = "And all the";
+ 182          char *code Lyrics9_2 = "things you do";
+ 183          
+ 184          char *code Lyrics10_1 = "And it was";
+ 185          char *code Lyrics10_2 = "called yellow";
+ 186          
+ 187          char *code Lyrics11_1 = "So then I took";
+ 188          char *code Lyrics11_2 = "my turn";
+ 189          
+ 190          char *code Lyrics12_1 = "Oh, what a thing";
+ 191          char *code Lyrics12_2 = "to have done";
+ 192          
+ 193          char *code Lyrics13_1 = "And it was all";
+ 194          char *code Lyrics13_2 = "yellow";
+ 195          
+ 196          char *code Lyrics14 = "Your skin";
+ 197          
+ 198          char *Lyrics15_1 = "Oh yeah, your";
+ 199          char *Lyrics15_2 = "skin and bones";
+ 200          
+ 201          char *code Lyrics16_1 = "Turn into";
+ 202          char *code Lyrics16_2 = "something";
+ 203          char *code Lyrics16_3 = "beautiful";
+ 204          
+ 205          char *Lyrics17 = "Do you know";
+ 206          
+ 207          char *code Lyrics18_1 = "You know I love";
+ 208          char *code Lyrics18_2 = "you so";
+ 209          
+ 210          unsigned char FreqSelect,MusicSelect[23];
+ 211          int i;
+ 212          
+ 213          void Broadcast(int i, unsigned char Music[])
+ 214          {
+ 215   1        while(Music[MusicSelect[i]]!=0xFF)
+ 216   1        {
+ 217   2          FreqSelect=Music[MusicSelect[i]];
+ 218   2          MusicSelect[i]++;
+ 219   2          Delay(SPEED/4*Music[MusicSelect[i]]);
+ 220   2          MusicSelect[i]++;
+ 221   2          TR0=0;
+ 222   2          Delay(5);
+ 223   2          TR0=1;
+ 224   2        }
+ 225   1        LCD_Init();
+ 226   1      }
+ 227          
+ 228          void main()
+ 229          {
+ 230   1        Timer0Init();
+ 231   1        
+ 232   1        LCD_Init();
+ 233   1        LCD_ShowString(1,1,Lyrics0);
+ 234   1        Broadcast(0,Music0);  
+ 235   1        
+ 236   1        LCD_ShowString(1,1,Lyrics1_1);  LCD_ShowString(2,5,Lyrics1_2);
+ 237   1        Broadcast(1,Music1);
+ 238   1        
+ 239   1        LCD_ShowString(1,1,Lyrics2_1);  LCD_ShowString(2,4,Lyrics2_2);
+ 240   1        Broadcast(2,Music2);
+C51 COMPILER V9.60.7.0   MAIN                                                              01/19/2023 14:08:57 PAGE 5   
+
+ 241   1      
+ 242   1        LCD_ShowString(1,1,Lyrics3_1);  LCD_ShowString(2,1,Lyrics3_2);
+ 243   1        Broadcast(3,Music3);
+ 244   1        
+ 245   1        LCD_ShowString(1,1,Lyrics4_1);  LCD_ShowString(2,1,Lyrics4_2);
+ 246   1        Broadcast(4,Music4);
+ 247   1        
+ 248   1        LCD_ShowString(1,1,Lyrics5_1);  LCD_ShowString(2,1,Lyrics5_2);
+ 249   1        Broadcast(5,Music5);
+ 250   1        
+ 251   1        LCD_ShowString(1,1,Lyrics6_1);  LCD_ShowString(2,1,Lyrics6_2);
+ 252   1        Broadcast(6,Music6);
+ 253   1        
+ 254   1        LCD_ShowString(1,1,Lyrics7);
+ 255   1        Broadcast(7,Music3);
+ 256   1        
+ 257   1        LCD_ShowString(1,1,Lyrics8_1);  LCD_ShowString(2,1,Lyrics8_2);
+ 258   1        Broadcast(8,Music4);
+ 259   1      
+ 260   1        LCD_ShowString(1,1,Lyrics9_1);  LCD_ShowString(2,1,Lyrics9_2);
+ 261   1        Broadcast(9,Music5);
+ 262   1        
+ 263   1        LCD_ShowString(1,1,Lyrics10_1); LCD_ShowString(2,1,Lyrics10_2);
+ 264   1        Broadcast(10,Music6);
+ 265   1        
+ 266   1        Broadcast(11,Music7);
+ 267   1        
+ 268   1        LCD_ShowString(1,1,Lyrics11_1); LCD_ShowString(2,1,Lyrics11_2);
+ 269   1        Broadcast(12,Music4);
+ 270   1        
+ 271   1        LCD_ShowString(1,1,Lyrics12_1); LCD_ShowString(2,1,Lyrics12_2);
+ 272   1        Broadcast(13,Music5);
+ 273   1        
+ 274   1        LCD_ShowString(1,1,Lyrics13_1); LCD_ShowString(2,1,Lyrics13_2);
+ 275   1        Broadcast(14,Music6);
+ 276   1        
+ 277   1        Broadcast(15,Music8);
+ 278   1        
+ 279   1        LCD_ShowString(1,1,Lyrics14);
+ 280   1        Broadcast(16,Music9);
+ 281   1        
+ 282   1        LCD_ShowString(1,1,Lyrics15_1); LCD_ShowString(2,1,Lyrics15_2);
+ 283   1        Broadcast(17,Music10);
+ 284   1        
+ 285   1        LCD_ShowString(1,1,Lyrics16_1);
+ 286   1        Broadcast(18,Music11_1);
+ 287   1        
+ 288   1        LCD_ShowString(1,1,Lyrics16_2); LCD_ShowString(2,8,Lyrics16_3);
+ 289   1        Broadcast(22,Music11_2);
+ 290   1        
+ 291   1        LCD_ShowString(1,1,Lyrics17);
+ 292   1        Broadcast(19,Music12);
+ 293   1        
+ 294   1        LCD_ShowString(1,1,Lyrics18_1); LCD_ShowString(2,1,Lyrics18_2);
+ 295   1        Broadcast(20,Music13);
+ 296   1        
+ 297   1        LCD_ShowString(1,1,Lyrics18_1); LCD_ShowString(2,1,Lyrics18_2);
+ 298   1        Broadcast(21,Music14);
+ 299   1        
+ 300   1        TR0=0;
+ 301   1        while(1);
+ 302   1      }
+C51 COMPILER V9.60.7.0   MAIN                                                              01/19/2023 14:08:57 PAGE 6   
+
+ 303          
+ 304          void Timer0_Routine() interrupt 1
+ 305          {
+ 306   1        if(FreqTable[FreqSelect]) 
+ 307   1        {
+ 308   2          TL0 = FreqTable[FreqSelect]%256;    
+ 309   2          TH0 = FreqTable[FreqSelect]/256;    
+ 310   2          Buzzer=!Buzzer; 
+ 311   2        }
+ 312   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1193    ----
+   CONSTANT SIZE    =    919    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =    109       5
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
